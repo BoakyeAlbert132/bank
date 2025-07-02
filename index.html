@@ -1167,13 +1167,13 @@
                     <p class="login-subtitle">Secure Personal Banking</p>
                     
                     <div id="errorMessage" class="error-message hidden">
-                        Invalid email or password. Please try again.
+                        Invalid username or password. Please try again.
                     </div>
                     
                     <form id="loginForm">
                         <div class="form-group">
-                            <label for="username">Email Address</label>
-                            <input type="email" id="username" placeholder="Enter your email address" required>
+                            <label for="username">Username</label>
+                            <input type="text" id="username" placeholder="Enter your username" required>
                         </div>
                         
                         <div class="form-group">
@@ -1196,7 +1196,7 @@
                 <div class="status-bar">
                     <span id="currentTime">11:14</span>
                     <div class="signal-info">
-                        <span>📶 LTE</span>
+                        <span>📶</span>
                         <span class="lte-badge">17</span>
                     </div>
                 </div>
@@ -1204,7 +1204,7 @@
                 <div class="header-content">
                     <div class="user-avatar">⚡</div>
                     <h1 class="bank-title">FIDELITY BANK</h1>
-                    <button class="logout-btn" onclick="logout()">🚪</button>
+                    <button class="logout-btn" onclick="logout()">🚪logout</button>
                 </div>
             </div>
 
@@ -1222,8 +1222,8 @@
                     </div>
                     
                     <div class="account-details">
-                        <p class="account-name">GODFRED AMEYAW-KORSAH-FIDELITY 24/7 RESERVE ACCOUNT #2030323022715</p>
-                        <p class="balance" id="balance">2,450.75 GHS</p>
+                        <p class="account-name">GODFRED AMEYAW-KORSAH-FIDELITY 24/7 RESERVE ACCOUNT #2030323564677</p>
+                        <p class="balance" id="balance">4,450.75 GHS</p>
                     </div>
                     
                     <button class="select-account-btn" onclick="showPage('accountServicesPage')">
@@ -1472,7 +1472,7 @@
                         <div class="payee-avatar">KA</div>
                         <div class="payee-info">
                             <h4>Kwame Asante</h4>
-                            <p>Account: 1234567890 • Fidelity Bank</p>
+                            <p>Account: 16348967890 • Fidelity Bank</p>
                         </div>
                     </div>
                     <div class="payee-item" onclick="showTransferForm('mobile', 'Akosua Mensah')">
@@ -1486,7 +1486,7 @@
                         <div class="payee-avatar">YB</div>
                         <div class="payee-info">
                             <h4>Yaw Boateng</h4>
-                            <p>Account: 9876543210 • GCB Bank</p>
+                            <p>Account: 9876943210 • GCB Bank</p>
                         </div>
                     </div>
                 </div>
@@ -1721,8 +1721,8 @@
         ];
 
         // Valid login credentials
-        const VALID_EMAIL = 'ameyawgodfred123@gmail.com';
-        const VALID_PASSWORD = 'ameyawgod123';
+        const VALID_EMAIL = '222';
+        const VALID_PASSWORD = '4646';
 
         // Page management
         function showPage(pageId) {
