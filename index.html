@@ -1,2178 +1,1677 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fidelity Bank - Personal Banking</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 25%, #b45309 50%, #92400e 75%, #78350f 100%);
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* Beautiful Background Pattern */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%),
-                linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
-                linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%);
-            background-size: 100% 100%, 100% 100%, 100% 100%, 60px 60px, 60px 60px;
-            z-index: -1;
-        }
-
-        /* Floating Elements */
-        body::after {
-            content: '';
-            position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: 
-                radial-gradient(circle at 25% 25%, rgba(255,255,255,0.03) 2px, transparent 2px),
-                radial-gradient(circle at 75% 75%, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 100px 100px, 50px 50px;
-            animation: float 20s linear infinite;
-            z-index: -1;
-        }
-
-        @keyframes float {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(-50px, -50px) rotate(360deg); }
-        }
-
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            min-height: 100vh;
-            background: rgba(255, 255, 255, 0.95);
-            position: relative;
-            box-shadow: 0 0 30px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
-        }
-
-        /* Page Management */
-        .page {
-            display: none;
-            min-height: 100vh;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        /* Login Styles */
-        .login-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-            background: linear-gradient(135deg, rgba(234, 88, 12, 0.9) 0%, rgba(220, 38, 38, 0.9) 100%);
-            position: relative;
-        }
-
-        .login-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
-            z-index: 1;
-        }
-
-        .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            position: relative;
-            z-index: 2;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .bank-logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-            box-shadow: 0 10px 20px rgba(234, 88, 12, 0.3);
-            position: relative;
-        }
-
-        .bank-logo::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            background: linear-gradient(135deg, #ea580c, #dc2626);
-            border-radius: 50%;
-            z-index: -1;
-            opacity: 0.3;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.3; }
-            50% { transform: scale(1.1); opacity: 0.1; }
-        }
-
-        .login-title {
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .login-subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 16px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 15px 18px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: rgba(255,255,255,0.9);
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #ea580c;
-            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .password-container {
-            position: relative;
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #666;
-            font-size: 18px;
-            padding: 5px;
-        }
-
-        .login-btn, .btn-primary {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-btn::before, .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .login-btn:hover::before, .btn-primary:hover::before {
-            left: 100%;
-        }
-
-        .login-btn:hover, .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
-        }
-
-        .login-btn:disabled, .btn-primary:disabled {
-            background: #d1d5db;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .error-message {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            border: 1px solid #fecaca;
-        }
-
-        /* Header Styles */
-        .header {
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-            color: white;
-            padding: 15px 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
-            z-index: 1;
-        }
-
-        .header > * {
-            position: relative;
-            z-index: 2;
-        }
-
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .signal-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .lte-badge {
-            background: rgba(255,255,255,0.9);
-            color: #ea580c;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-
-        .bank-title {
-            font-size: 20px;
-            font-weight: bold;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .logout-btn, .back-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            padding: 10px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .logout-btn:hover, .back-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-1px);
-        }
-
-        /* Page Header */
-        .page-header {
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-            color: white;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .page-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
-            z-index: 1;
-        }
-
-        .page-header > * {
-            position: relative;
-            z-index: 2;
-        }
-
-        .page-title {
-            font-size: 22px;
-            font-weight: 600;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        /* Main Content */
-        .main-content {
-            padding: 20px;
-            padding-bottom: 100px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%);
-            min-height: calc(100vh - 200px);
-        }
-
-        .account-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .account-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #ea580c 0%, #dc2626 100%);
-        }
-
-        .account-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 25px;
-        }
-
-        .account-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .profile-pic {
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            border-radius: 50%;
-            border: 3px solid rgba(234, 88, 12, 0.1);
-        }
-
-        .qr-code {
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
-        .greeting {
-            text-align: right;
-        }
-
-        .greeting p {
-            color: #666;
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-
-        .my-accounts-btn {
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            border: 2px solid rgba(234, 88, 12, 0.2);
-            padding: 10px 18px;
-            border-radius: 25px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .my-accounts-btn:hover {
-            border-color: #ea580c;
-            background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
-            transform: translateY(-1px);
-        }
-
-        .account-details {
-            margin-bottom: 25px;
-        }
-
-        .account-name {
-            color: #ea580c;
-            font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .balance {
-            font-size: 36px;
-            font-weight: bold;
-            color: #1f2937;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .select-account-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-            border: 2px solid #e5e7eb;
-            padding: 18px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            cursor: pointer;
-            color: #666;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .select-account-btn:hover {
-            border-color: #ea580c;
-            background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.1);
-        }
-
-        .services-grid {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .services {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-
-        .service-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            padding: 20px 15px;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .service-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(234, 88, 12, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .service-item:hover::before {
-            opacity: 1;
-        }
-
-        .service-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.15);
-        }
-
-        .service-icon {
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 22px;
-            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3);
-            position: relative;
-            z-index: 2;
-        }
-
-        .service-label {
-            font-size: 13px;
-            text-align: center;
-            color: #333;
-            font-weight: 500;
-            position: relative;
-            z-index: 2;
-        }
-
-        .scan-pay-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-            color: white;
-            border: none;
-            padding: 22px;
-            border-radius: 20px;
-            font-size: 20px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .scan-pay-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .scan-pay-btn:hover::before {
-            left: 100%;
-        }
-
-        .scan-pay-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(234, 88, 12, 0.4);
-        }
-
-        /* Card Styles */
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #1f2937;
-        }
-
-        /* Transaction Styles */
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px;
-            border: 2px solid #f3f4f6;
-            border-radius: 15px;
-            margin-bottom: 12px;
-            transition: all 0.3s ease;
-            background: rgba(255,255,255,0.8);
-        }
-
-        .transaction-item:hover {
-            border-color: rgba(234, 88, 12, 0.3);
-            background: rgba(255,247,237,0.8);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.1);
-        }
-
-        .transaction-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .transaction-icon {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .transaction-details h4 {
-            font-size: 15px;
-            margin-bottom: 6px;
-            color: #1f2937;
-            font-weight: 600;
-        }
-
-        .transaction-details p {
-            font-size: 13px;
-            color: #666;
-        }
-
-        .transaction-amount {
-            text-align: right;
-        }
-
-        .amount {
-            font-weight: 600;
-            margin-bottom: 6px;
-            font-size: 15px;
-        }
-
-        .amount.positive {
-            color: #16a34a;
-        }
-
-        .amount.negative {
-            color: #dc2626;
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-completed {
-            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-            color: #16a34a;
-            border: 1px solid #86efac;
-        }
-
-        .status-pending {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            color: #d97706;
-            border: 1px solid #fbbf24;
-            animation: pulse-pending 2s infinite;
-        }
-
-        @keyframes pulse-pending {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 400px;
-            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-around;
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            color: #9ca3af;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            padding: 8px 12px;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item.active {
-            color: #ea580c;
-            background: rgba(234, 88, 12, 0.1);
-        }
-
-        .nav-item:hover {
-            color: #ea580c;
-            transform: translateY(-2px);
-        }
-
-        .nav-icon {
-            width: 24px;
-            height: 24px;
-            font-size: 18px;
-        }
-
-        /* Quick Actions */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .quick-action {
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #f3f4f6;
-            border-radius: 15px;
-            padding: 25px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .quick-action::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(234, 88, 12, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .quick-action:hover::before {
-            opacity: 1;
-        }
-
-        .quick-action:hover {
-            border-color: #ea580c;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.15);
-        }
-
-        .quick-action-icon {
-            font-size: 35px;
-            margin-bottom: 12px;
-        }
-
-        .quick-action-label {
-            font-weight: 600;
-            color: #333;
-            font-size: 15px;
-        }
-
-        /* Payee List */
-        .payee-item {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            padding: 18px;
-            border: 2px solid #f3f4f6;
-            border-radius: 15px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(255,255,255,0.8);
-        }
-
-        .payee-item:hover {
-            background: rgba(255,247,237,0.8);
-            border-color: rgba(234, 88, 12, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.1);
-        }
-
-        .payee-avatar {
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3);
-        }
-
-        .payee-info h4 {
-            font-size: 16px;
-            margin-bottom: 6px;
-            color: #1f2937;
-            font-weight: 600;
-        }
-
-        .payee-info p {
-            font-size: 14px;
-            color: #666;
-        }
-
-        /* Settings Items */
-        .settings-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px;
-            border-bottom: 1px solid #f3f4f6;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .settings-item:hover {
-            background: rgba(255,247,237,0.5);
-            transform: translateX(5px);
-        }
-
-        .settings-item:last-child {
-            border-bottom: none;
-        }
-
-        .settings-item-info {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .settings-icon {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .settings-item-info h4 {
-            font-size: 16px;
-            margin-bottom: 4px;
-            color: #1f2937;
-            font-weight: 600;
-        }
-
-        .settings-item-info p {
-            font-size: 14px;
-            color: #666;
-        }
-
-        /* Chat Styles */
-        .chat-container {
-            height: calc(100vh - 200px);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background: linear-gradient(to bottom, #f9fafb 0%, #f3f4f6 100%);
-        }
-
-        .chat-message {
-            margin-bottom: 18px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-
-        .chat-message.user {
-            flex-direction: row-reverse;
-        }
-
-        .chat-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
-        }
-
-        .chat-message.user .chat-avatar {
-            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-        }
-
-        .chat-bubble {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px 18px;
-            border-radius: 20px;
-            max-width: 75%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .chat-message.user .chat-bubble {
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-            color: white;
-        }
-
-        .chat-input-container {
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            border-top: 1px solid #e5e7eb;
-            backdrop-filter: blur(10px);
-        }
-
-        .chat-input-form {
-            display: flex;
-            gap: 12px;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 15px 20px;
-            border: 2px solid #e5e7eb;
-            border-radius: 25px;
-            font-size: 16px;
-            background: rgba(255,255,255,0.9);
-            transition: all 0.3s ease;
-        }
-
-        .chat-input:focus {
-            outline: none;
-            border-color: #ea580c;
-            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
-        }
-
-        .chat-send-btn {
-            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3);
-        }
-
-        .chat-send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
-        }
-
-        /* Scan & Pay Styles */
-        .scan-container {
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .scan-frame {
-            width: 280px;
-            height: 280px;
-            border: 4px solid #ea580c;
-            border-radius: 20px;
-            margin: 0 auto 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-            position: relative;
-            box-shadow: 0 10px 30px rgba(234, 88, 12, 0.2);
-        }
-
-        .scan-corners {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            bottom: 15px;
-            border: 3px solid #ea580c;
-            border-radius: 15px;
-            animation: scan-pulse 2s infinite;
-        }
-
-        @keyframes scan-pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .scan-corners::before,
-        .scan-corners::after {
-            content: '';
-            position: absolute;
-            width: 25px;
-            height: 25px;
-            border: 4px solid #ea580c;
-        }
-
-        .scan-corners::before {
-            top: -4px;
-            left: -4px;
-            border-right: none;
-            border-bottom: none;
-        }
-
-        .scan-corners::after {
-            bottom: -4px;
-            right: -4px;
-            border-left: none;
-            border-top: none;
-        }
-
-        .scan-text {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 30px;
-            font-weight: 500;
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .container {
-                max-width: 100%;
-            }
-            
-            .login-container {
-                padding: 15px;
-            }
-            
-            .main-content {
-                padding: 15px;
-                padding-bottom: 100px;
-            }
-            
-            .services {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .hidden {
-            display: none;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fidelity Bank - Personal Banking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 25%, #b45309 50%, #92400e 75%, #78350f 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Beautiful Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%),
+                linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 60px 60px, 60px 60px;
+            z-index: -1;
+        }
+
+        /* Floating Elements */
+        body::after {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(255,255,255,0.03) 2px, transparent 2px),
+                radial-gradient(circle at 75% 75%, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100px 100px, 50px 50px;
+            animation: float 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-50px, -50px) rotate(360deg); }
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Page Management */
+        .page {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Login Styles */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(234, 88, 12, 0.9) 0%, rgba(220, 38, 38, 0.9) 100%);
+            position: relative;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            z-index: 1;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .bank-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(234, 88, 12, 0.3);
+            position: relative;
+        }
+
+        .bank-logo::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(135deg, #ea580c, #dc2626);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.1; }
+        }
+
+        .login-title {
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .login-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #ea580c;
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        .login-btn, .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn::before, .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .login-btn:hover::before, .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover, .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+        }
+
+        .login-btn:disabled, .btn-primary:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border: 1px solid #fecaca;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            color: white;
+            padding: 15px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            z-index: 1;
+        }
+
+        .header > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .signal-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .lte-badge {
+            background: rgba(255,255,255,0.9);
+            color: #ea580c;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .bank-title {
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .logout-btn, .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .logout-btn:hover, .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            z-index: 1;
+        }
+
+        .page-header > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            padding-bottom: 100px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%);
+            min-height: calc(100vh - 200px);
+        }
+
+        .account-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ea580c 0%, #dc2626 100%);
+        }
+
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .account-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-pic {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 50%;
+            border: 3px solid rgba(234, 88, 12, 0.1);
+        }
+
+        .qr-code {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .greeting {
+            text-align: right;
+        }
+
+        .greeting p {
+            color: #666;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .my-accounts-btn {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 2px solid rgba(234, 88, 12, 0.2);
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .my-accounts-btn:hover {
+            border-color: #ea580c;
+            background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+            transform: translateY(-1px);
+        }
+
+        .account-details {
+            margin-bottom: 25px;
+        }
+
+        .account-name {
+            color: #ea580c;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .balance {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1f2937;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .select-account-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border: 2px solid #e5e7eb;
+            padding: 18px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .select-account-btn:hover {
+            border-color: #ea580c;
+            background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.1);
+        }
+
+        .services-grid {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .services {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .service-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(234, 88, 12, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-item:hover::before {
+            opacity: 1;
+        }
+
+        .service-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.15);
+        }
+
+        .service-icon {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .service-label {
+            font-size: 13px;
+            text-align: center;
+            color: #333;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+        }
+
+        .scan-pay-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 22px;
+            border-radius: 20px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scan-pay-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .scan-pay-btn:hover::before {
+            left: 100%;
+        }
+
+        .scan-pay-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(234, 88, 12, 0.4);
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+
+        /* Transaction Styles */
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px;
+            border: 2px solid #f3f4f6;
+            border-radius: 15px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.8);
+        }
+
+        .transaction-item:hover {
+            border-color: rgba(234, 88, 12, 0.3);
+            background: rgba(255,247,237,0.8);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.1);
+        }
+
+        .transaction-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .transaction-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .transaction-details h4 {
+            font-size: 15px;
+            margin-bottom: 6px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .transaction-details p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .transaction-amount {
+            text-align: right;
+        }
+
+        .amount {
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+
+        .amount.positive {
+            color: #16a34a;
+        }
+
+        .amount.negative {
+            color: #dc2626;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-completed {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #16a34a;
+            border: 1px solid #86efac;
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #d97706;
+            border: 1px solid #fbbf24;
+            animation: pulse-pending 2s infinite;
+        }
+
+        @keyframes pulse-pending {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 400px;
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-around;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: #ea580c;
+            background: rgba(234, 88, 12, 0.1);
+        }
+
+        .nav-item:hover {
+            color: #ea580c;
+            transform: translateY(-2px);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            font-size: 18px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .quick-action {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #f3f4f6;
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quick-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(234, 88, 12, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .quick-action:hover::before {
+            opacity: 1;
+        }
+
+        .quick-action:hover {
+            border-color: #ea580c;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.15);
+        }
+
+        .quick-action-icon {
+            font-size: 35px;
+            margin-bottom: 12px;
+        }
+
+        .quick-action-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        /* Payee List */
+        .payee-item {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 18px;
+            border: 2px solid #f3f4f6;
+            border-radius: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.8);
+        }
+
+        .payee-item:hover {
+            background: rgba(255,247,237,0.8);
+            border-color: rgba(234, 88, 12, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.1);
+        }
+
+        .payee-avatar {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3);
+        }
+
+        .payee-info h4 {
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .payee-info p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Settings Items */
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .settings-item:hover {
+            background: rgba(255,247,237,0.5);
+            transform: translateX(5px);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .settings-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .settings-item-info h4 {
+            font-size: 16px;
+            margin-bottom: 4px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .settings-item-info p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Chat Styles */
+        .chat-container {
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: linear-gradient(to bottom, #f9fafb 0%, #f3f4f6 100%);
+        }
+
+        .chat-message {
+            margin-bottom: 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
+        }
+
+        .chat-message.user .chat-avatar {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+        }
+
+        .chat-bubble {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 18px;
+            border-radius: 20px;
+            max-width: 75%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .chat-message.user .chat-bubble {
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-top: 1px solid #e5e7eb;
+            backdrop-filter: blur(10px);
+        }
+
+        .chat-input-form {
+            display: flex;
+            gap: 12px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 25px;
+            font-size: 16px;
+            background: rgba(255,255,255,0.9);
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #ea580c;
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+        }
+
+        .chat-send-btn {
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3);
+        }
+
+        .chat-send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+        }
+
+        /* Scan & Pay Styles */
+        .scan-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .scan-frame {
+            width: 280px;
+            height: 280px;
+            border: 4px solid #ea580c;
+            border-radius: 20px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            position: relative;
+            box-shadow: 0 10px 30px rgba(234, 88, 12, 0.2);
+        }
+
+        .scan-corners {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            border: 3px solid #ea580c;
+            border-radius: 15px;
+            animation: scan-pulse 2s infinite;
+        }
+
+        @keyframes scan-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .scan-corners::before,
+        .scan-corners::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border: 4px solid #ea580c;
+        }
+
+        .scan-corners::before {
+            top: -4px;
+            left: -4px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .scan-corners::after {
+            bottom: -4px;
+            right: -4px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .scan-text {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .login-container {
+                padding: 15px;
+            }
+            
+            .main-content {
+                padding: 15px;
+                padding-bottom: 100px;
+            }
+            
+            .services {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Login Page -->
-        <div id="loginPage" class="page active">
-            <div class="login-container">
-                <div class="login-card">
-                    <div class="bank-logo">🏦</div>
-                    <h1 class="login-title">FIDELITY BANK</h1>
-                    <p class="login-subtitle">Secure Personal Banking</p>
-                    
-                    <div id="errorMessage" class="error-message hidden">
-                        Invalid username or password. Please try again.
-                    </div>
-                    
-                    <form id="loginForm">
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" id="username" placeholder="Enter your username" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <div class="password-container">
-                                <input type="password" id="password" placeholder="Enter your password" required>
-                                <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
-                    </form>
-                </div>
-            </div>
-        </div>
 
-        <!-- Dashboard Page -->
-        <div id="dashboardPage" class="page">
-            <div class="header">
-                <div class="status-bar">
-                    <span id="currentTime">11:14</span>
-                    <div class="signal-info">
-                       
-                    </div>
-                </div>
-                
-                <div class="header-content">
-                    <div class="user-avatar">⚡</div>
-                    <h1 class="bank-title">FIDELITY BANK</h1>
-                    <button class="logout-btn" onclick="logout()">🚪logout</button>
-                </div>
-            </div>
+    <div class="container">
 
-            <div class="main-content">
-                <div class="account-card">
-                    <div class="account-header">
-                        <div class="account-info">
-                            <div class="profile-pic"></div>
-                            <div class="qr-code">QR</div>
-                        </div>
-                        <div class="greeting">
-                            <p>Hello,</p>
-                            <button class="my-accounts-btn" onclick="showPage('accountServicesPage')">My Accounts</button>
-                        </div>
-                    </div>
-                    
-                    <div class="account-details">
-                        <p> Awiti Samuel </p>
-                        <p class="balance" id="balance">$5,450,899</p>
-                    </div>
-                    
-                    <button class="select-account-btn" onclick="showPage('accountServicesPage')">
-                        ℹ️ Select Account 🔄
-                    </button>
-                </div>
+                <div id="login-page" class="page active">
+            <div class="login-container">
+                <div class="login-card">
+                    <div class="bank-logo">F</div>
+                    <h1 class="login-title">Welcome Back</h1>
+                    <p class="login-subtitle">Sign in to manage your account.</p>
 
-                <div class="services-grid">
-                    <div class="services">
-                        <div class="service-item" onclick="showPage('transfersPage')">
-                            <div class="service-icon">💸</div>
-                            <span class="service-label">Transfers</span>
-                        </div>
-                        <div class="service-item" onclick="showPage('paymentsPage')">
-                            <div class="service-icon">💳</div>
-                            <span class="service-label">Payments</span>
-                        </div>
-                        <div class="service-item" onclick="showPage('airtimePage')">
-                            <div class="service-icon">📱</div>
-                            <span class="service-label">Airtime & Data</span>
-                        </div>
-                        <div class="service-item" onclick="showPage('payeesPage')">
-                            <div class="service-icon">👥</div>
-                            <span class="service-label">My Payees</span>
-                        </div>
-                        <div class="service-item" onclick="showPage('accountServicesPage')">
-                            <div class="service-icon">⚙️</div>
-                            <span class="service-label">Account Services</span>
-                        </div>
-                        <div class="service-item" onclick="showPage('transactionsPage')">
-                            <div class="service-icon">📋</div>
-                            <span class="service-label">View All</span>
-                        </div>
-                    </div>
-                </div>
+                    <div id="login-error-message" class="error-message" style="display: none;"></div>
 
-                <button class="scan-pay-btn" onclick="showPage('scanPayPage')">
-                    📱 Scan & Pay
-                </button>
+                    <div class="form-group">
+                        <label for="accountNumber">Account Number / User ID</label>
+                        <input type="text" id="accountNumber" placeholder="Enter Account Number or User ID">
+                    </div>
 
-                <div class="card">
-                    <h3 class="card-title">Recent Transactions</h3>
-                    <div id="recentTransactions">
-                        <!-- Transactions will be populated here -->
-                    </div>
-                </div>
-            </div>
-        </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-container">
+                            <input type="password" id="password" placeholder="Enter Password">
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">
+                                <i class="fas fa-eye-slash" id="toggleIcon"></i>
+                            </button>
+                        </div>
+                    </div>
 
-        <!-- Transfers Page -->
-        <div id="transfersPage" class="page">
-            <div class="page-header">
-                <button class="back-btn" onclick="showPage('dashboardPage')">←</button>
-                <h2 class="page-title">Transfers</h2>
-            </div>
-            
-            <div class="main-content">
-                <div class="quick-actions">
-                    <div class="quick-action" onclick="showTransferForm('bank')">
-                        <div class="quick-action-icon">🏦</div>
-                        <div class="quick-action-label">Bank Transfer</div>
-                    </div>
-                    <div class="quick-action" onclick="showTransferForm('mobile')">
-                        <div class="quick-action-icon">📱</div>
-                        <div class="quick-action-label">Mobile Money</div>
-                    </div>
-                </div>
+                    <button class="login-btn" onclick="login()">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </div>
+            </div>
+        </div>
 
-                <div class="card">
-                    <h3 class="card-title">Recent Recipients</h3>
-                    <div class="payee-item" onclick="showTransferForm('bank', 'Kwame Asante')">
-                        <div class="payee-avatar">KA</div>
-                        <div class="payee-info">
-                            <h4>Kwame Asante</h4>
-                            <p>Bank Transfer • Last used 2 days ago</p>
-                        </div>
-                    </div>
-                    <div class="payee-item" onclick="showTransferForm('mobile', 'Akosua Mensah')">
-                        <div class="payee-avatar">AM</div>
-                        <div class="payee-info">
-                            <h4>Akosua Mensah</h4>
-                            <p>Mobile Money • Last used 1 week ago</p>
-                        </div>
-                    </div>
-                </div>
+                <div id="dashboard-page" class="page">
+            <header class="header">
+                <div class="status-bar">
+                    <div>9:41 AM</div>
+                    <div class="signal-info">
+                        <span class="lte-badge">LTE</span>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-full"></i>
+                    </div>
+                </div>
+                <div class="header-content">
+                    <div class="user-avatar">J</div>
+                    <div class="bank-title">Fidelity Bank</div>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
 
-                <div id="transferForm" class="card hidden">
-                    <h3 class="card-title">Send Money</h3>
-                    <form id="transferFormElement">
-                        <div class="form-group">
-                            <label for="transferRecipient">Recipient Name</label>
-                            <input type="text" id="transferRecipient" placeholder="Enter recipient name" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="transferAmount">Amount ($)</label>
-                            <input type="number" id="transferAmount" step="0.01" placeholder="0.00" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="transferDescription">Description (Optional)</label>
-                            <input type="text" id="transferDescription" placeholder="What's this for?">
-                        </div>
-                        
-                        <button type="submit" class="btn-primary" id="transferBtn">Send Money</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+            <div class="main-content">
+                
+                                <div class="account-card">
+                    <div class="account-header">
+                        <div class="greeting">
+                            <p>Good morning,</p>
+                            <h2 style="font-size: 24px; color: #1f2937;">John Doe</h2>
+                        </div>
+                        <button class="my-accounts-btn" onclick="goToPage('accounts-page')">
+                            <i class="fas fa-wallet"></i> My Accounts
+                        </button>
+                    </div>
+                    <div class="account-details">
+                        <p class="account-name">Fidelity Savings Account - **0012</p>
+                        <div class="balance" id="main-balance">$12,345.67</div>
+                    </div>
+                    <button class="select-account-btn">
+                        View all accounts <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                                <button class="scan-pay-btn" onclick="goToPage('scan-pay-page')">
+                    <i class="fas fa-qrcode"></i> Scan & Pay
+                </button>
 
-        <!-- Payments Page -->
-        <div id="paymentsPage" class="page">
-            <div class="page-header">
-                <button class="back-btn" onclick="showPage('dashboardPage')">←</button>
-                <h2 class="page-title">Payments</h2>
-            </div>
-            
-            <div class="main-content">
-                <div class="quick-actions">
-                    <div class="quick-action" onclick="showBillPayment('electricity')">
-                        <div class="quick-action-icon">⚡</div>
-                        <div class="quick-action-label">ECG Bill</div>
-                    </div>
-                    <div class="quick-action" onclick="showBillPayment('water')">
-                        <div class="quick-action-icon">💧</div>
-                        <div class="quick-action-label">GWCL Water</div>
-                    </div>
-                    <div class="quick-action" onclick="showBillPayment('internet')">
-                        <div class="quick-action-icon">🌐</div>
-                        <div class="quick-action-label">Internet</div>
-                    </div>
-                    <div class="quick-action" onclick="showBillPayment('tv')">
-                        <div class="quick-action-icon">📺</div>
-                        <div class="quick-action-label">DStv/GOtv</div>
-                    </div>
-                </div>
+                                <div class="services-grid">
+                    <h3 class="card-title">Quick Services</h3>
+                    <div class="services">
+                        <div class="service-item" onclick="goToPage('transfer-page')">
+                            <div class="service-icon"><i class="fas fa-exchange-alt"></i></div>
+                            <span class="service-label">Transfer</span>
+                        </div>
+                        <div class="service-item" onclick="goToPage('airtime-data-page')">
+                            <div class="service-icon"><i class="fas fa-mobile-alt"></i></div>
+                            <span class="service-label">Airtime & Data</span>
+                        </div>
+                        <div class="service-item" onclick="goToPage('bill-pay-page')">
+                            <div class="service-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                            <span class="service-label">Bill Payments</span>
+                        </div>
+                        <div class="service-item" onclick="alert('Card Management clicked')">
+                            <div class="service-icon"><i class="fas fa-credit-card"></i></div>
+                            <span class="service-label">Card Mgt.</span>
+                        </div>
+                        <div class="service-item" onclick="alert('Loans & Overdrafts clicked')">
+                            <div class="service-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                            <span class="service-label">Loans</span>
+                        </div>
+                        <div class="service-item" onclick="goToPage('settings-page')">
+                            <div class="service-icon"><i class="fas fa-cog"></i></div>
+                            <span class="service-label">Settings</span>
+                        </div>
+                    </div>
+                </div>
 
-                <div id="billPaymentForm" class="card hidden">
-                    <h3 class="card-title" id="billPaymentTitle">Pay Bill</h3>
-                    <form id="billPaymentFormElement">
-                        <div class="form-group">
-                            <label for="billAccount">Account Number</label>
-                            <input type="text" id="billAccount" placeholder="Enter account number" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="billAmount">Amount ($)</label>
-                            <input type="number" id="billAmount" step="0.01" placeholder="0.00" required>
-                        </div>
-                        
-                        <button type="submit" class="btn-primary" id="billPayBtn">Pay Bill</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+                                <div class="card">
+                    <h3 class="card-title">Recent Activity</h3>
+                    <div id="transactions-list">
+                                            </div>
+                    <button class="select-account-btn" onclick="goToPage('accounts-page')">
+                        View All Transactions <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
 
-        <!-- Airtime & Data Page -->
-        <div id="airtimePage" class="page">
-            <div class="page-header">
-                <button class="back-btn" onclick="showPage('dashboardPage')">←</button>
-                <h2 class="page-title">Airtime & Data</h2>
-            </div>
-            
-            <div class="main-content">
-                <div class="card">
-                    <h3 class="card-title">Buy Airtime</h3>
-                    <form id="airtimeForm">
-                        <div class="form-group">
-                            <label for="airtimeNetwork">Network</label>
-                            <select id="airtimeNetwork" required>
-                                <option value="">Select Network</option>
-                                <option value="mtn">MTN Ghana</option>
-                                <option value="vodafone">Vodafone Ghana</option>
-                                <option value="airteltigo">AirtelTigo</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="airtimePhone">Phone Number</label>
-                            <input type="tel" id="airtimePhone" placeholder="024 XXX XXXX" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="airtimeAmount">Amount ($)</label>
-                            <select id="airtimeAmount" required>
-                                <option value="">Select Amount</option>
-                                <option value="1">1 $</option>
-                                <option value="2">2 $</option>
-                                <option value="5">5 $</option>
-                                <option value="10">10 $</option>
-                                <option value="20">20 $</option>
-                                <option value="50">50 $</option>
-                            </select>
-                        </div>
-                        
-                        <button type="submit" class="btn-primary" id="airtimeBtn">Buy Airtime</button>
-                    </form>
-                </div>
+            </div>
 
-                <div class="card">
-                    <h3 class="card-title">Buy Data</h3>
-                    <form id="dataForm">
-                        <div class="form-group">
-                            <label for="dataNetwork">Network</label>
-                            <select id="dataNetwork" required>
-                                <option value="">Select Network</option>
-                                <option value="mtn">MTN Ghana</option>
-                                <option value="vodafone">Vodafone Ghana</option>
-                                <option value="airteltigo">AirtelTigo</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="dataPhone">Phone Number</label>
-                            <input type="tel" id="dataPhone" placeholder="024 XXX XXXX" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="dataBundle">Data Bundle</label>
-                            <select id="dataBundle" required>
-                                <option value="">Select Bundle</option>
-                                <option value="1gb">1GB - 5 $</option>
-                                <option value="2gb">2GB - 10 $</option>
-                                <option value="5gb">5GB - 20 $</option>
-                                <option value="10gb">10GB - 35 $</option>
-                            </select>
-                        </div>
-                        
-                        <button type="submit" class="btn-primary" id="dataBtn">Buy Data</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+                        <nav class="bottom-nav">
+                <div class="nav-item active" onclick="goToPage('dashboard-page')">
+                    <i class="fas fa-home nav-icon"></i>
+                    <span>Home</span>
+                </div>
+                <div class="nav-item" onclick="goToPage('transfer-page')">
+                    <i class="fas fa-exchange-alt nav-icon"></i>
+                    <span>Transfer</span>
+                </div>
+                <div class="nav-item" onclick="goToPage('chat-page')">
+                    <i class="fas fa-comment-dots nav-icon"></i>
+                    <span>Chat</span>
+                </div>
+                <div class="nav-item" onclick="goToPage('settings-page')">
+                    <i class="fas fa-cog nav-icon"></i>
+                    <span>Settings</span>
+                </div>
+            </nav>
+        </div>
 
-        <!-- My Payees Page -->
-        <div id="payeesPage" class="page">
-            <div class="page-header">
-                <button class="back-btn" onclick="showPage('dashboardPage')">←</button>
-                <h2 class="page-title">My Payees</h2>
-            </div>
-            
-            <div class="main-content">
-                <div class="card">
-                    <h3 class="card-title">Saved Payees</h3>
-                    <div class="payee-item" onclick="showTransferForm('bank', 'Kwame Asante')">
-                        <div class="payee-avatar">KA</div>
-                        <div class="payee-info">
-                            <h4>Kwame Asante</h4>
-                            <p>Account: 16348967890 • Fidelity Bank</p>
-                        </div>
-                    </div>
-                    <div class="payee-item" onclick="showTransferForm('mobile', 'Akosua Mensah')">
-                        <div class="payee-avatar">AM</div>
-                        <div class="payee-info">
-                            <h4>Akosua Mensah</h4>
-                            <p>Mobile: 0244123456 • MTN MoMo</p>
-                        </div>
-                    </div>
-                    <div class="payee-item" onclick="showTransferForm('bank', 'Yaw Boateng')">
-                        <div class="payee-avatar">YB</div>
-                        <div class="payee-info">
-                            <h4>Yaw Boateng</h4>
-                            <p>Account: 9876943210 • GCB Bank</p>
-                        </div>
-                    </div>
-                </div>
+                <div id="transfer-page" class="page">
+            <header class="page-header">
+                <button class="back-btn" onclick="goToPage('dashboard-page')"><i class="fas fa-arrow-left"></i></button>
+                <h2 class="page-title">Funds Transfer</h2>
+            </header>
+            <div class="main-content">
+                <div class="quick-actions">
+                    <div class="quick-action" onclick="alert('Own Account Transfer clicked')">
+                        <i class="fas fa-sync-alt quick-action-icon" style="color: #1d4ed8;"></i>
+                        <span class="quick-action-label">Own Accounts</span>
+                    </div>
+                    <div class="quick-action" onclick="alert('Other Fidelity Account clicked')">
+                        <i class="fas fa-building quick-action-icon" style="color: #059669;"></i>
+                        <span class="quick-action-label">Other Fidelity</span>
+                    </div>
+                    <div class="quick-action" onclick="alert('Other Bank Transfer clicked')">
+                        <i class="fas fa-university quick-action-icon" style="color: #f59e0b;"></i>
+                        <span class="quick-action-label">Other Banks</span>
+                    </div>
+                    <div class="quick-action" onclick="alert('FX Transfer clicked')">
+                        <i class="fas fa-globe quick-action-icon" style="color: #ef4444;"></i>
+                        <span class="quick-action-label">FX Transfer</span>
+                    </div>
+                </div>
 
-                <button class="btn-primary" onclick="showPage('transfersPage')">Add New Payee</button>
-            </div>
-        </div>
+                <div class="card">
+                    <h3 class="card-title">Recent Payees</h3>
+                    <div class="payee-item" onclick="alert('Transfer to Sarah Johnson')">
+                        <div class="payee-avatar">SJ</div>
+                        <div class="payee-info">
+                            <h4>Sarah Johnson</h4>
+                            <p>Access Bank - **5432</p>
+                        </div>
+                    </div>
+                    <div class="payee-item" onclick="alert('Transfer to MTN Mobile Money')">
+                        <div class="payee-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">MM</div>
+                        <div class="payee-info">
+                            <h4>MTN Mobile Money</h4>
+                            <p>024 XXXX XXX</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+                <div id="airtime-data-page" class="page">
+            <header class="page-header">
+                <button class="back-btn" onclick="goToPage('dashboard-page')"><i class="fas fa-arrow-left"></i></button>
+                <h2 class="page-title">Airtime & Data</h2>
+            </header>
+            <div class="main-content">
+                <div class="card">
+                    <h3 class="card-title">Buy Airtime</h3>
+                    <div class="form-group">
+                        <label for="airtimeNetwork">Network Provider</label>
+                        <select id="airtimeNetwork">
+                            <option value="">Select Network</option>
+                            <option value="MTN">MTN</option>
+                            <option value="Vodafone">Vodafone</option>
+                            <option value="AirtelTigo">AirtelTigo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="airtimeNumber">Phone Number</label>
+                        <input type="tel" id="airtimeNumber" placeholder="e.g. 024 XXXX XXX">
+                    </div>
+                    <div class="form-group">
+                        <label for="airtimeAmount">Amount (Dollars)</label>
+                        <input type="number" id="airtimeAmount" placeholder="e.g. 10.00">
+                    </div>
+                    <button class="btn-primary" onclick="alert('Airtime Purchase for $' + document.getElementById('airtimeAmount').value)">
+                        <i class="fas fa-money-bill-wave"></i> Buy Airtime
+                    </button>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Buy Data Bundle</h3>
+                    <p style="color: #666;">This feature is currently only available via the mobile USSD *XXX#</p>
+                </div>
+            </div>
+        </div>
 
-        <!-- Account Services Page -->
-        <div id="accountServicesPage" class="page">
-            <div class="page-header">
-                <button class="back-btn" onclick="showPage('dashboardPage')">←</button>
-                <h2 class="page-title">Account Services</h2>
-            </div>
-            
-            <div class="main-content">
-                <div class="card">
-                    <div class="settings-item" onclick="showAccountStatement()">
-                        <div class="settings-item-info">
-                            <div class="settings-icon">📄</div>
-                            <div>
-                                <h4>Account Statement</h4>
-                                <p>Download your account statement</p>
-                            </div>
-                        </div>
-                        <span>→</span>
-                    </div>
-                    
-                    <div class="settings-item" onclick="showAccountDetails()">
-                        <div class="settings-item-info">
-                            <div class="settings-icon">ℹ️</div>
-                            <div>
-                                <h4>Account Details</h4>
-                                <p>View your account information</p>
-                            </div>
-                        </div>
-                        <span>→</span>
-                    </div>
-                    
-                    <div class="settings-item" onclick="showCardServices()">
-                        <div class="settings-item-info">
-                            <div class="settings-icon">💳</div>
-                            <div>
-                                <h4>Card Services</h4>
-                                <p>Manage your debit/credit cards</p>
-                            </div>
-                        </div>
-                        <span>→</span>
-                    </div>
-                    
-                    <div class="settings-item" onclick="showLoanServices()">
-                        <div class="settings-item-info">
-                            <div class="settings-icon">💰</div>
-                            <div>
-                                <h4>Loan Services</h4>
-                                <p>Apply for loans and view status</p>
-                            </div>
-                        </div>
-                        <span>→</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+                <div id="bill-pay-page" class="page">
+            <header class="page-header">
+                <button class="back-btn" onclick="goToPage('dashboard-page')"><i class="fas fa-arrow-left"></i></button>
+                <h2 class="page-title">Bill Payments</h2>
+            </header>
+            <div class="main-content">
+                <div class="quick-actions">
+                    <div class="quick-action" onclick="alert('Electricity Bill clicked')">
+                        <i class="fas fa-lightbulb quick-action-icon" style="color: #f59e0b;"></i>
+                        <span class="quick-action-label">Electricity</span>
+                    </div>
+                    <div class="quick-action" onclick="alert('Water Bill clicked')">
+                        <i class="fas fa-tint quick-action-icon" style="color: #1d4ed8;"></i>
+                        <span class="quick-action-label">Water</span>
+                    </div>
+                    <div class="quick-action" onclick="alert('TV/Internet Bill clicked')">
+                        <i class="fas fa-tv quick-action-icon" style="color: #dc2626;"></i>
+                        <span class="quick-action-label">TV/Internet</span>
+                    </div>
+                    <div class="quick-action" onclick="alert('School Fees clicked')">
+                        <i class="fas fa-graduation-cap quick-action-icon" style="color: #059669;"></i>
+                        <span class="quick-action-label">School Fees</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <!-- Transactions Page -->
-        <div id="transactionsPage" class="page">
-            <div class="page-header">
-                <button class="back-btn" onclick="showPage('dashboardPage')">←</button>
-                <h2 class="page-title">All Transactions</h2>
-            </div>
-            
-            <div class="main-content">
-                <div class="card">
-                    <h3 class="card-title">Transaction History</h3>
-                    <div id="allTransactions">
-                        <!-- All transactions will be populated here -->
-                    </div>
-                </div>
-            </div>
-        </div>
+                <div id="accounts-page" class="page">
+            <header class="page-header">
+                <button class="back-btn" onclick="goToPage('dashboard-page')"><i class="fas fa-arrow-left"></i></button>
+                <h2 class="page-title">My Accounts</h2>
+            </header>
+            <div class="main-content">
+                <div class="card">
+                    <h3 class="card-title">All Accounts</h3>
+                    <div class="account-item">
+                        <div class="payee-info">
+                            <h4>Fidelity Savings Account</h4>
+                            <p>**0012</p>
+                        </div>
+                        <div class="amount" style="color: #1f2937;">$12,345.67</div>
+                    </div>
+                    <div class="account-item">
+                        <div class="payee-info">
+                            <h4>Fidelity Current Account</h4>
+                            <p>**5678</p>
+                        </div>
+                        <div class="amount" style="color: #1f2937;">$8,901.23</div>
+                    </div>
+                    <div class="account-item">
+                        <div class="payee-info">
+                            <h4>Domiciliary Account (USD)</h4>
+                            <p>**9011</p>
+                        </div>
+                        <div class="amount" style="color: #1f2937;">$4,567.89</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <!-- Settings Page -->
-        <div id="settingsPage" class="page">
-            <div class="page-header">
-                <button class="back-btn" onclick="showPage('dashboardPage')">←</button>
-                <h2 class="page-title">Settings</h2>
-            </div>
-            
-            <div class="main-content">
-                <div class="card">
-                    <div class="settings-item" onclick="showProfileSettings()">
-                        <div class="settings-item-info">
-                            <div class="settings-icon">👤</div>
-                            <div>
-                                <h4>Profile Settings</h4>
-                                <p>Update your personal information</p>
-                            </div>
-                        </div>
-                        <span>→</span>
-                    </div>
-                    
-                    <div class="settings-item" onclick="showSecuritySettings()">
-                        <div class="settings-item-info">
-                            <div class="settings-icon">🔒</div>
-                            <div>
-                                <h4>Security Settings</h4>
-                                <p>Change password and security options</p>
-                            </div>
-                        </div>
-                        <span>→</span>
-                    </div>
-                    
-                    <div class="settings-item" onclick="showNotificationSettings()">
-                        <div class="settings-item-info">
-                            <div class="settings-icon">🔔</div>
-                            <div>
-                                <h4>Notifications</h4>
-                                <p>Manage your notification preferences</p>
-                            </div>
-                        </div>
-                        <span>→</span>
-                    </div>
-                    
-                    <div class="settings-item" onclick="showHelpSupport()">
-                        <div class="settings-item-info">
-                            <div class="settings-icon">❓</div>
-                            <div>
-                                <h4>Help & Support</h4>
-                                <p>Get help and contact support</p>
-                            </div>
-                        </div>
-                        <span>→</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+                <div id="settings-page" class="page">
+            <header class="page-header">
+                <button class="back-btn" onclick="goToPage('dashboard-page')"><i class="fas fa-arrow-left"></i></button>
+                <h2 class="page-title">Settings</h2>
+            </header>
+            <div class="main-content">
+                <div class="card">
+                    <h3 class="card-title">Account & Security</h3>
+                    <div class="settings-item" onclick="alert('Change PIN clicked')">
+                        <div class="settings-item-info">
+                            <div class="settings-icon"><i class="fas fa-key"></i></div>
+                            <div>
+                                <h4>Change PIN/Password</h4>
+                                <p>Update your access credentials</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                    </div>
+                    <div class="settings-item" onclick="alert('Biometrics clicked')">
+                        <div class="settings-item-info">
+                            <div class="settings-icon" style="background: linear-gradient(135deg, #bbf7d0 0%, #dcfce7 100%); color: #059669;"><i class="fas fa-fingerprint"></i></div>
+                            <div>
+                                <h4>Biometric Login</h4>
+                                <p>Fingerprint & Face ID</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-toggle-on" style="color: #ea580c; font-size: 24px;"></i>
+                    </div>
+                    <div class="settings-item" onclick="alert('Transaction Limits clicked')">
+                        <div class="settings-item-info">
+                            <div class="settings-icon" style="background: linear-gradient(135deg, #bfdbfe 0%, #eff6ff 100%); color: #1d4ed8;"><i class="fas fa-sliders-h"></i></div>
+                            <div>
+                                <h4>Transaction Limits</h4>
+                                <p>Set daily transaction caps</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <!-- Chat Page -->
-        <div id="chatPage" class="page">
-            <div class="page-header">
-                <button class="back-btn" onclick="showPage('dashboardPage')">←</button>
-                <h2 class="page-title">Customer Support</h2>
-            </div>
-            
-            <div class="chat-container">
-                <div class="chat-messages" id="chatMessages">
-                    <div class="chat-message">
-                        <div class="chat-avatar">FB</div>
-                        <div class="chat-bubble">
-                            Akwaaba! Welcome to Fidelity Bank customer support. How can I help you today?
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="chat-input-container">
-                    <form class="chat-input-form" id="chatForm">
-                        <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." required>
-                        <button type="submit" class="chat-send-btn">📤</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+                <div id="chat-page" class="page">
+            <header class="page-header">
+                <button class="back-btn" onclick="goToPage('dashboard-page')"><i class="fas fa-arrow-left"></i></button>
+                <h2 class="page-title">Live Chat</h2>
+            </header>
+            <div class="chat-container">
+                <div class="chat-messages">
+                    <div class="chat-message">
+                        <div class="chat-avatar">F</div>
+                        <div class="chat-bubble">
+                            Hello John, how can I assist you with your banking today?
+                        </div>
+                    </div>
+                    <div class="chat-message user">
+                        <div class="chat-avatar">J</div>
+                        <div class="chat-bubble">
+                            I need to check the status of my recent transfer of $500.
+                        </div>
+                    </div>
+                    <div class="chat-message">
+                        <div class="chat-avatar">F</div>
+                        <div class="chat-bubble">
+                            One moment while I check that for you.
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <form class="chat-input-form" onsubmit="event.preventDefault(); sendMessage();">
+                        <input type="text" id="chat-input" class="chat-input" placeholder="Type your message...">
+                        <button type="submit" class="chat-send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-        <!-- Scan & Pay Page -->
-        <div id="scanPayPage" class="page">
-            <div class="page-header">
-                <button class="back-btn" onclick="showPage('dashboardPage')">←</button>
-                <h2 class="page-title">Scan & Pay</h2>
-            </div>
-            
-            <div class="main-content">
-                <div class="scan-container">
-                    <div class="scan-frame">
-                        <div class="scan-corners"></div>
-                        <div style="font-size: 60px;">📱</div>
-                    </div>
-                    <p class="scan-text">Position the QR code within the frame to scan</p>
-                    <button class="btn-primary" onclick="simulateQRScan()">Simulate QR Scan</button>
-                </div>
-            </div>
-        </div>
+                <div id="scan-pay-page" class="page">
+            <header class="page-header">
+                <button class="back-btn" onclick="goToPage('dashboard-page')"><i class="fas fa-arrow-left"></i></button>
+                <h2 class="page-title">Scan to Pay</h2>
+            </header>
+            <div class="main-content">
+                <div class="scan-container">
+                    <div class="scan-frame">
+                        <i class="fas fa-qrcode" style="font-size: 80px; color: #ea580c;"></i>
+                        <div class="scan-corners"></div>
+                    </div>
+                    <p class="scan-text">Align the merchant's QR code within the frame to pay.</p>
+                    <button class="btn-primary" onclick="alert('Open Gallery to select image for payment.')">
+                        <i class="fas fa-image"></i> Select from Gallery
+                    </button>
+                </div>
+            </div>
+        </div>
 
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav" id="bottomNav" style="display: none;">
-            <div class="nav-item active" onclick="showPage('dashboardPage'); setActiveNav(this)">
-                <div class="nav-icon">🏠</div>
-                <span>Home</span>
-            </div>
-            <div class="nav-item" onclick="showPage('transactionsPage'); setActiveNav(this)">
-                <div class="nav-icon">📋</div>
-                <span>Transactions</span>
-            </div>
-            <div class="nav-item" onclick="showPage('settingsPage'); setActiveNav(this)">
-                <div class="nav-icon">⚙️</div>
-                <span>Settings</span>
-            </div>
-            <div class="nav-item" onclick="showPage('chatPage'); setActiveNav(this)">
-                <div class="nav-icon">💬</div>
-                <span>Chat</span>
-            </div>
-        </div>
-    </div>
 
-    <script>
-        // Global variables
-        let currentBalance = 2450.75$;
-        let transactions = [
-            {
-                id: 1,
-                type: 'deposit',
-                amount: 1200.00,
-                recipient: 'Salary - Ministry of Education',
-                status: 'completed',
-                date: new Date('2025-01-01')
-            },
-            {
-                id: 2,
-                type: 'transfer',
-                amount: -250.00,
-                recipient: 'Kwame Asante',
-                status: 'completed',
-                date: new Date('2024-12-30')
-            },
-            {
-                id: 3,
-                type: 'payment',
-                amount: -45.50,
-                recipient: 'ECG Bill Payment',
-                status: 'completed',
-                date: new Date('2024-12-28')
-            }
-        ];
+    </div>     <script>
+        // Dummy data for demonstration - CHANGED TO DOLLARS ($)
+        const accountData = {
+            balance: '12,345.67',
+            transactions: [
+                { id: 1, type: 'Transfer', name: 'Netflix Subscription', icon: 'fas fa-tv', amount: '-$7.99', date: 'Oct 5, 2025', status: 'Completed', class: 'negative' },
+                { id: 2, type: 'Income', name: 'Salary Deposit', icon: 'fas fa-briefcase', amount: '+$2,500.00', date: 'Oct 4, 2025', status: 'Completed', class: 'positive' },
+                { id: 3, type: 'Bill', name: 'Electricity Bill', icon: 'fas fa-lightbulb', amount: '-$55.00', date: 'Oct 3, 2025', status: 'Pending', class: 'negative' },
+                { id: 4, type: 'Payment', name: 'Jumia Online Order', icon: 'fas fa-shopping-cart', amount: '-$120.50', date: 'Oct 2, 2025', status: 'Completed', class: 'negative' },
+                { id: 5, type: 'Airtime', name: 'MTN Airtime Top-up', icon: 'fas fa-mobile-alt', amount: '-$10.00', date: 'Oct 1, 2025', status: 'Completed', class: 'negative' },
+            ]
+        };
 
-        // Valid login credentials
-        const VALID_EMAIL = '222';
-        const VALID_PASSWORD = '4646';
+        function goToPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
 
-        // Page management
-        function showPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Show selected page
-            document.getElementById(pageId).classList.add('active');
-            
-            // Show/hide bottom navigation
-            if (pageId === 'loginPage') {
-                document.getElementById('bottomNav').style.display = 'none';
-            } else {
-                document.getElementById('bottomNav').style.display = 'flex';
-            }
-            
-            // Update page-specific content
-            if (pageId === 'transactionsPage') {
-                renderAllTransactions();
-            } else if (pageId === 'dashboardPage') {
-                renderRecentTransactions();
-            }
-        }
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            // Logic to highlight correct nav item based on pageId
+            if (pageId === 'dashboard-page') {
+                document.querySelector('.nav-item:nth-child(1)').classList.add('active');
+            } else if (pageId === 'transfer-page') {
+                document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+            } else if (pageId === 'chat-page') {
+                document.querySelector('.nav-item:nth-child(3)').classList.add('active');
+            } else if (pageId === 'settings-page') {
+                document.querySelector('.nav-item:nth-child(4)').classList.add('active');
+            }
+        }
 
-        // Navigation
-        function setActiveNav(element) {
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            element.classList.add('active');
-        }
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            }
+        }
 
-        // Login functionality with restricted credentials
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-            const loginBtn = document.getElementById('loginBtn');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            // Hide any previous error messages
-            errorMessage.classList.add('hidden');
-            
-            // Check credentials
-            if (email !== VALID_EMAIL || password !== VALID_PASSWORD) {
-                errorMessage.classList.remove('hidden');
-                return;
-            }
-            
-            loginBtn.textContent = 'Signing in...';
-            loginBtn.disabled = true;
-            
-            setTimeout(() => {
-                showPage('dashboardPage');
-                updateBalance();
-                renderRecentTransactions();
-                updateTime();
-            }, 1500);
-        });
+        function login() {
+            const accountNumber = document.getElementById('accountNumber').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('login-error-message');
 
-        // Password toggle
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleBtn = document.querySelector('.password-toggle');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleBtn.textContent = '🙈';
-            } else {
-                passwordInput.type = 'password';
-                toggleBtn.textContent = '👁️';
-            }
-        }
+            if (accountNumber === '1234' && password === 'pass') {
+                errorDiv.style.display = 'none';
+                goToPage('dashboard-page');
+                renderDashboard();
+            } else {
+                errorDiv.textContent = 'Invalid Account Number/User ID or Password. Please try again.';
+                errorDiv.style.display = 'block';
+            }
+        }
 
-        // Logout functionality
-        function logout() {
-            showPage('loginPage');
-            document.getElementById('loginForm').reset();
-            document.getElementById('loginBtn').textContent = 'Sign In';
-            document.getElementById('loginBtn').disabled = false;
-            document.getElementById('errorMessage').classList.add('hidden');
-        }
+        function logout() {
+            goToPage('login-page');
+            // Clear inputs for next login attempt
+            document.getElementById('accountNumber').value = '';
+            document.getElementById('password').value = '';
+        }
 
-        // Transfer functionality
-        function showTransferForm(type, recipient = '') {
-            document.getElementById('transferForm').classList.remove('hidden');
-            if (recipient) {
-                document.getElementById('transferRecipient').value = recipient;
-            }
-        }
+        function renderTransactions() {
+            const list = document.getElementById('transactions-list');
+            list.innerHTML = '';
+            accountData.transactions.forEach(tx => {
+                const statusClass = tx.status === 'Completed' ? 'status-completed' : 'status-pending';
+                const html = `
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-icon"><i class="${tx.icon}"></i></div>
+                            <div class="transaction-details">
+                                <h4>${tx.name}</h4>
+                                <p>${tx.date}</p>
+                            </div>
+                        </div>
+                        <div class="transaction-amount">
+                            <div class="amount ${tx.class}">${tx.amount}</div>
+                            <span class="status-badge ${statusClass}">${tx.status}</span>
+                        </div>
+                    </div>
+                `;
+                list.innerHTML += html;
+            });
+        }
 
-        document.getElementById('transferFormElement').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const transferBtn = document.getElementById('transferBtn');
-            const recipient = document.getElementById('transferRecipient').value;
-            const amount = parseFloat(document.getElementById('transferAmount').value);
-            
-            transferBtn.textContent = 'Processing...';
-            transferBtn.disabled = true;
-            
-            setTimeout(() => {
-                const newTransaction = {
-                    id: transactions.length + 1,
-                    type: 'transfer',
-                    amount: -amount,
-                    recipient: recipient,
-                    status: 'pending', // All new transactions start as pending
-                    date: new Date()
-                };
-                
-                transactions.unshift(newTransaction);
-                currentBalance -= amount;
-                
-                updateBalance();
-                renderRecentTransactions();
-                
-                transferBtn.textContent = 'Send Money';
-                transferBtn.disabled = false;
-                document.getElementById('transferFormElement').reset();
-                document.getElementById('transferForm').classList.add('hidden');
-                
-                alert(`Transfer of ${amount.toFixed(2)} GHS to ${recipient} is now pending!`);
-            }, 2000);
-        });
+        function renderDashboard() {
+            document.getElementById('main-balance').textContent = `\$${accountData.balance}`;
+            renderTransactions();
+        }
 
-        // Bill payment functionality
-        function showBillPayment(type) {
-            document.getElementById('billPaymentForm').classList.remove('hidden');
-            let title = '';
-            switch(type) {
-                case 'electricity':
-                    title = 'Pay ECG Bill';
-                    break;
-                case 'water':
-                    title = 'Pay GWCL Water Bill';
-                    break;
-                case 'internet':
-                    title = 'Pay Internet Bill';
-                    break;
-                case 'tv':
-                    title = 'Pay DStv/GOtv Bill';
-                    break;
-                default:
-                    title = 'Pay Bill';
-            }
-            document.getElementById('billPaymentTitle').textContent = title;
-        }
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (message === '') return;
 
-        document.getElementById('billPaymentFormElement').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const billPayBtn = document.getElementById('billPayBtn');
-            const account = document.getElementById('billAccount').value;
-            const amount = parseFloat(document.getElementById('billAmount').value);
-            
-            billPayBtn.textContent = 'Processing...';
-            billPayBtn.disabled = true;
-            
-            setTimeout(() => {
-                const newTransaction = {
-                    id: transactions.length + 1,
-                    type: 'payment',
-                    amount: -amount,
-                    recipient: `Bill Payment - ${account}`,
-                    status: 'pending', // All new transactions start as pending
-                    date: new Date()
-                };
-                
-                transactions.unshift(newTransaction);
-                currentBalance -= amount;
-                
-                updateBalance();
-                renderRecentTransactions();
-                
-                billPayBtn.textContent = 'Pay Bill';
-                billPayBtn.disabled = false;
-                document.getElementById('billPaymentFormElement').reset();
-                document.getElementById('billPaymentForm').classList.add('hidden');
-                
-                alert(`Bill payment of ${amount.toFixed(2)} GHS is now pending!`);
-            }, 2000);
-        });
+            const messagesContainer = document.querySelector('.chat-messages');
+            
+            // User Message
+            const userMsgHtml = `
+                <div class="chat-message user">
+                    <div class="chat-avatar">J</div>
+                    <div class="chat-bubble">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            messagesContainer.innerHTML += userMsgHtml;
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to bottom
 
-        // Airtime functionality
-        document.getElementById('airtimeForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const airtimeBtn = document.getElementById('airtimeBtn');
-            const network = document.getElementById('airtimeNetwork').value;
-            const phone = document.getElementById('airtimePhone').value;
-            const amount = parseFloat(document.getElementById('airtimeAmount').value);
-            
-            airtimeBtn.textContent = 'Processing...';
-            airtimeBtn.disabled = true;
-            
-            setTimeout(() => {
-                const networkName = network === 'mtn' ? 'MTN Ghana' : 
-                                 network === 'vodafone' ? 'Vodafone Ghana' : 'AirtelTigo';
-                
-                const newTransaction = {
-                    id: transactions.length + 1,
-                    type: 'airtime',
-                    amount: -amount,
-                    recipient: `${networkName} Airtime - ${phone}`,
-                    status: 'pending', // All new transactions start as pending
-                    date: new Date()
-                };
-                
-                transactions.unshift(newTransaction);
-                currentBalance -= amount;
-                
-                updateBalance();
-                renderRecentTransactions();
-                
-                airtimeBtn.textContent = 'Buy Airtime';
-                airtimeBtn.disabled = false;
-                document.getElementById('airtimeForm').reset();
-                
-                alert(`Airtime purchase of ${amount.toFixed(2)} GHS is pending!`);
-            }, 1500);
-        });
+            // Simple Bot Reply (Delayed)
+            setTimeout(() => {
+                const botReply = `Thank you for your message: "${message}". A customer service agent will be with you shortly.`;
+                const botMsgHtml = `
+                    <div class="chat-message">
+                        <div class="chat-avatar">F</div>
+                        <div class="chat-bubble">
+                            ${botReply}
+                        </div>
+                    </div>
+                `;
+                messagesContainer.innerHTML += botMsgHtml;
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 1500);
+        }
 
-        // Data functionality
-        document.getElementById('dataForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const dataBtn = document.getElementById('dataBtn');
-            const network = document.getElementById('dataNetwork').value;
-            const phone = document.getElementById('dataPhone').value;
-            const bundle = document.getElementById('dataBundle').value;
-            
-            dataBtn.textContent = 'Processing...';
-            dataBtn.disabled = true;
-            
-            setTimeout(() => {
-                const bundleInfo = document.getElementById('dataBundle').selectedOptions[0].text;
-                const amount = parseFloat(bundleInfo.split(' - ')[1].replace(' GHS', ''));
-                const networkName = network === 'mtn' ? 'MTN Ghana' : 
-                                 network === 'vodafone' ? 'Vodafone Ghana' : 'AirtelTigo';
-                
-                const newTransaction = {
-                    id: transactions.length + 1,
-                    type: 'data',
-                    amount: -amount,
-                    recipient: `${networkName} Data - ${phone}`,
-                    status: 'pending', // All new transactions start as pending
-                    date: new Date()
-                };
-                
-                transactions.unshift(newTransaction);
-                currentBalance -= amount;
-                
-                updateBalance();
-                renderRecentTransactions();
-                
-                dataBtn.textContent = 'Buy Data';
-                dataBtn.disabled = false;
-                document.getElementById('dataForm').reset();
-                
-                alert(`Data purchase is pending!`);
-            }, 1500);
-        });
-
-        // Chat functionality
-        document.getElementById('chatForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const chatInput = document.getElementById('chatInput');
-            const message = chatInput.value.trim();
-            
-            if (message) {
-                addChatMessage(message, true);
-                chatInput.value = '';
-                
-                // Simulate bot response with Ghanaian context
-                setTimeout(() => {
-                    const responses = [
-                        "Thank you for your message. How can I assist you further?",
-                        "I understand your concern. Let me help you with that.",
-                        "That's a great question! Let me provide you with the information.",
-                        "I'm here to help. Is there anything specific about your account you'd like to know?",
-                        "Medaase (Thank you)! How else can I support you today?"
-                    ];
-                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                    addChatMessage(randomResponse, false);
-                }, 1000);
-            }
-        });
-
-        function addChatMessage(message, isUser) {
-            const chatMessages = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat-message ${isUser ? 'user' : ''}`;
-            
-            messageDiv.innerHTML = `
-                <div class="chat-avatar">${isUser ? 'U' : 'FB'}</div>
-                <div class="chat-bubble">${message}</div>
-            `;
-            
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // QR Scan simulation
-        function simulateQRScan() {
-            const merchants = ['Shoprite Ghana', 'Max Mart', 'Palace Mall', 'Melcom Plus'];
-            const randomMerchant = merchants[Math.floor(Math.random() * merchants.length)];
-            const randomAmount = (Math.random() * 100 + 10).toFixed(2);
-            
-            alert(`QR Code scanned! Payment to ${randomMerchant}`);
-            
-            // Simulate a payment from QR scan
-            const newTransaction = {
-                id: transactions.length + 1,
-                type: 'payment',
-                amount: -parseFloat(randomAmount),
-                recipient: `QR Payment - ${randomMerchant}`,
-                status: 'pending', // All new transactions start as pending
-                date: new Date()
-            };
-            
-            transactions.unshift(newTransaction);
-            currentBalance -= parseFloat(randomAmount);
-            
-            updateBalance();
-            renderRecentTransactions();
-            showPage('dashboardPage');
-        }
-
-        // Account services functions
-        function showAccountStatement() {
-            alert('Account statement will be sent to your email within 24 hours.');
-        }
-
-        function showAccountDetails() {
-            alert('Account Details:\nName: GODFRED AMEYAW-KORSAH\nAccount: 2030323022715\nType: FIDELITY 24/7 RESERVE ACCOUNT\nBranch: Accra Main Branch\nSort Code: 240101');
-        }
-
-        function showCardServices() {
-            alert('Card Services:\n• Block/Unblock Card\n• Request New Card\n• Change PIN\n• View Card Details\n• International Usage');
-        }
-
-        function showLoanServices() {
-            alert('Loan Services:\n• Personal Loan\n• Business Loan\n• Mortgage\n• Auto Loan\n• Student Loan\nContact us at 0302 613 613 for more information.');
-        }
-
-        // Settings functions
-        function showProfileSettings() {
-            alert('Profile Settings:\n• Update Personal Information\n• Change Contact Details\n• Update Address\n• Emergency Contacts');
-        }
-
-        function showSecuritySettings() {
-            alert('Security Settings:\n• Change Password\n• Enable 2FA\n• Security Questions\n• Login Alerts\n• Transaction Limits');
-        }
-
-        function showNotificationSettings() {
-            alert('Notification Settings:\n• SMS Alerts\n• Email Notifications\n• Push Notifications\n• Transaction Alerts\n• Account Balance Alerts');
-        }
-
-        function showHelpSupport() {
-            alert('Help & Support:\n• FAQ\n• Contact Support\n• Live Chat\n• Visit Branch\n• Call: 0302 613 613\n• WhatsApp: 0501 613 613');
-        }
-
-        // Update balance display
-        function updateBalance() {
-            document.getElementById('balance').textContent = `${currentBalance.toFixed(2)} GHS`;
-        }
-
-        // Update time
-        function updateTime() {
-            const now = new Date();
-            const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
-                             now.getMinutes().toString().padStart(2, '0');
-            document.getElementById('currentTime').textContent = timeString;
-        }
-
-        // Render transactions
-        function renderRecentTransactions() {
-            const container = document.getElementById('recentTransactions');
-            const recentTransactions = transactions.slice(0, 3);
-            
-            if (recentTransactions.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No transactions yet</p>';
-                return;
-            }
-            
-            container.innerHTML = recentTransactions.map(transaction => {
-                return createTransactionHTML(transaction);
-            }).join('');
-        }
-
-        function renderAllTransactions() {
-            const container = document.getElementById('allTransactions');
-            
-            if (transactions.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No transactions yet</p>';
-                return;
-            }
-            
-            container.innerHTML = transactions.map(transaction => {
-                return createTransactionHTML(transaction);
-            }).join('');
-        }
-
-        function createTransactionHTML(transaction) {
-            const isPositive = transaction.amount > 0;
-            const statusClass = transaction.status === 'completed' ? 'status-completed' : 'status-pending';
-            const amountClass = isPositive ? 'positive' : 'negative';
-            const icon = transaction.status === 'pending' ? '⏳' : (isPositive ? '💰' : '💸');
-            
-            return `
-                <div class="transaction-item">
-                    <div class="transaction-info">
-                        <div class="transaction-icon">${icon}</div>
-                        <div class="transaction-details">
-                            <h4>${transaction.recipient}</h4>
-                            <p>${transaction.date.toLocaleDateString()}</p>
-                        </div>
-                    </div>
-                    <div class="transaction-amount">
-                        <p class="amount ${amountClass}">
-                            ${isPositive ? '+' : ''}${transaction.amount.toFixed(2)} GHS
-                        </p>
-                        <span class="status-badge ${statusClass}">${transaction.status}</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Auto-complete pending transactions (slower completion rate)
-        setInterval(() => {
-            const pendingTransactions = transactions.filter(t => t.status === 'pending');
-            if (pendingTransactions.length > 0) {
-                // Only complete one pending transaction every 30 seconds
-                const randomIndex = Math.floor(Math.random() * pendingTransactions.length);
-                pendingTransactions[randomIndex].status = 'completed';
-                renderRecentTransactions();
-                renderAllTransactions();
-            }
-        }, 30000); // Check every 30 seconds
-
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            updateTime();
-            setInterval(updateTime, 60000); // Update time every minute
-        });
-    </script>
+        // Initial rendering on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initially, only the login page is active
+            // renderDashboard will be called upon successful login
+        });
+    </script>
 </body>
 </html>
-
