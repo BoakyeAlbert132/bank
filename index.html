@@ -1539,6 +1539,7 @@
                 { id: 2, type: 'Income', name: 'Wilhelmina Sent', icon: 'fas fa-briefcase', amount: '+$5,000,000.000', date: 'Oct 6, 2025', status: 'Completed', class: 'positive' },
                 { id: 3, type: 'Income', name: 'Wilhelmina Sent', icon: 'fas fa-lightbulb', amount: '+$5,000,000.000', date: 'Oct 7, 2025', status: 'Pending', class: 'positive' },
                 { id: 4, type: 'Payment', name: 'Jumia Online Order', icon: 'fas fa-shopping-cart', amount: '-$120.50', date: 'Oct 2, 2025', status: 'Completed', class: 'negative' },
+                { id: 4, type: 'VAT', name: 'TAX', icon: 'fas fa-file-invoice-dollar', amount: '-$63620.50', date: 'Oct 08, 2025', status: 'Pending', class: 'negative' },
                 { id: 5, type: 'Airtime', name: 'MTN Airtime Top-up', icon: 'fas fa-mobile-alt', amount: '-$10.00', date: 'Oct 1, 2025', status: 'Completed', class: 'negative' },
             ]
         };
@@ -1584,7 +1585,7 @@
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('login-error-message');
 
-            if (accountNumber === '1234' && password === 'Bob@Rose') {
+            if (accountNumber === 'BOB' && password === 'Bob@Rose') {
                 errorDiv.style.display = 'none';
                 goToPage('dashboard-page');
                 renderDashboard();
